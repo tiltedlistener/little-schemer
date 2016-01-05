@@ -135,4 +135,45 @@
      ((null? (cdr lset)) (car lset))
      (else
       (intersect (car lset) (intersectall (cdr lset)))))))
-     
+
+(define a-pair?
+  (lambda (l)
+    (cond
+     ((atom? l) #f)
+     ((null? l) #f)
+     ((null? (cdr l)) #f)
+     ((null? (cdr (cdr l))) #t)
+     (else #f))))
+
+; Top of page 119
+(define first
+  (lambda (l)
+    (car l)))
+
+(define second
+  (lambda (l)
+    (car (cdr l))))
+
+(define third
+  (lambda (l)
+    (car (cdr (cdr l)))))
+
+(define build
+  (lambda (s1 s2)
+    (cons s1 (cons s2 (quote())))))
+
+(define firsts
+  (lambda (l)
+	 (cond
+	  ((null? l) (quote()))
+	  (else (cons (car (car l))
+		      (firsts (cdr l)))))))
+
+(define revrel
+  (lambda (l)
+    (cond
+     ((null? l) (quote()))
+     (else
+     (cons (build (second (car l)) (first (car l))) (revrel (cdr
+							     l)))))))
+
