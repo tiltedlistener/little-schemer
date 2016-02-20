@@ -172,7 +172,138 @@
 		     (lambda (newlat seen)
 		       (col (cons (car lat) newlat) seen)))))))
 
+
+(define multirember&count
+  (lambda (a lat col)
+    (cond
+    ((null? lat) (col 0 0))
+    ((eq? (car lat) a)
+     (multirember&count a (cdr lat)
+		     (lambda (tnot tseen)
+		       (col tnot (+ 1 tseen )))))
+    (else
+     (multirember&count a (cdr lat)
+		     (lambda (tnot tseen)
+		       (col (+ 1 tnot) tseen )))))))
+
+(define revealcount
+  (lambda (x y)
+    (cons x (cons y '()))))
+
+
 (define a-friend
   (lambda (x y)
     (null? y)))
+
+
+; Page 141
+
+
+(define multiinsertR
+  (lambda (new old lat)
+    (cond
+     ((null? lat) (quote()))
+     ((eq? (car lat) old)
+      (cons (car lat) (cons new (multiinsertR new old (cdr lat)))))
+      (else
+       (cons (car lat) (multiinsertR new old (cdr lat)))))))
+
+(define multiinsertL
+  (lambda (new old lat)
+    (cond
+     ((null? lat) (quote()))
+     ((eq? (car lat) old)
+      (cons new (cons (car lat) (multiinsertL new old (cdr lat)))))
+      (else
+       (cons (car lat) (multiinsertL new old (cdr lat)))))))
+
+
+
+(define multirember&co
+  (lambda (a lat col)
+    (cond
+    ((null? lat) (col '() '()))
+    ((eq? (car lat) a)
+     (multirember&co a (cdr lat)
+		     (lambda (newlat seen)
+		       (col newlat (cons (car lat) seen)))))
+    (else
+     (multirember&co a (cdr lat)
+		     (lambda (newlat seen)
+		       (col (cons (car lat) newlat) seen)))))))
+
+
+(define multiinsertLR
+  (lambda (new oldL oldR lat)
+    (cond
+     ((null? lat) '())
+     ((eq? oldL (car lat)) (cons new (cons (car lat) (multiinsertLR new oldL oldR (cdr
+								   lat)))))
+     ((eq? oldR (car lat)) (cons (car lat) (cons new (multiinsertLR new oldL oldR (cdr
+										   lat)))))
+     (else
+      (cons (car lat) (multiinsertLR new oldL oldR (cdr lat)))))))
+
+
+(define last-friends
+  (lambda (x y)
+    (cons (length x) (cons (length y) '()))))
+
+; Note - I only returned the counts here
+(define multiinsertLR&co
+  (lambda (new oldL oldR lat col)
+    (cond
+     ((null? lat) (col '() '()))
+     ((eq? oldL (car lat)) (multiinsertLR&co new oldL oldR (cdr
+										      lat)
+								       (lambda (latL latR)
+  (col (cons (car lat) latL) latR))))
+     ((eq? oldR (car lat)) (multiinsertLR&co new oldL oldR (cdr
+										      lat)
+								       (lambda (latL latR)
+  (col latL (cons (car lat) latR)))))
+     (else
+      (cons (car lat) (multiinsertLR&co new oldL oldR (cdr lat)
+					col))))))
+
+; Page 144
+(define lat?
+  (lambda(l)
+    (cond
+     ((null? l) #t)
+     ((symbol? (car l)) (lat? (cdr l)))
+     (else #f))))
+
+(define atom?
+  (lambda (x)
+    (and (not (pair? x)) (not (null? x)))))
+
+(define even?
+  (lambda (n)
+    (= (modulo n 2) 0)))
+
+(define evens-only*
+  (lambda (lat)
+    (cond
+     ((null? lat) '())
+     ((atom? (car lat))
+      (cond
+       ((even? (car lat)) (cons (car lat) (evens-only* (cdr lat))))
+       (else
+	(evens-only* (cdr lat)))))
+     (else
+      (cons (evens-only* (car lat)) (evens-only* (cdr-lat)))))))
+    
+(define return
+  (lambda (v)
+    v))
+; From http://stackoverflow.com/questions/10692449/the-little-schemer-evens-onlyco
+(define (length/k lis return)
+  (cond ((null? lis) (return 0))
+        (else
+         (length/k (cdr lis)
+                   (lambda (cdr-len)
+                     (return (+ cdr-len 1)))))))
+
+
 
